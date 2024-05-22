@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -13,10 +14,24 @@ type Converter struct {
 	userInput string
 }
 
+func (c *Converter) validateUserInput(text string) bool {
+	pattern := `[0-9]+\.+\[0-9]`
+	re := regexp.MustCompile(pattern)
+	matches := re.FindAllString(text, -1)
+	if len(matches) > 0 {
+		return false
+	}
+	return true
+}
+
 func (c *Converter) getUserInput() {
 	fmt.Println("Enter The Decimal Number: ")
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')
+	if !c.validateUserInput(text) {
+		fmt.Println("Only Numbers Please")
+		os.Exit(1)
+	}
 	text = strings.Split(text, "\n")[0]
 	c.userInput = text
 }
